@@ -21,8 +21,5 @@ public class Health
         CurrentValue = Mathf.Clamp(CurrentValue, 0, _maxValue);
 
         OnHealthChanged?.Invoke(CurrentValue);
-
-        if (CurrentValue <= 0)
-            Debug.Log("Смерть");
     }
 }

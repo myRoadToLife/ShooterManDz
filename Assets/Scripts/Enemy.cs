@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class Enemy : MonoBehaviour, IDamageable
@@ -13,33 +14,38 @@ public class Enemy : MonoBehaviour, IDamageable
 
     private Mover _mover;
     private Health _health;
+    private Spawner _spawner;
     private GameInput _moveInput;
-
-    public void Initialize(Mover mover, Health health, GameInput moveInput)
-    {
-        _mover = mover;
-        _health = health;
-        _moveInput = moveInput;
-
-        _health.OnHealthChanged += Health_OnHealthChanged;
-    }
 
     private void Update()
     {
         Patrol();
     }
 
+    public void Initialize(Mover mover, Health health, GameInput moveInput, Spawner spawner)
+    {
+        _mover = mover;
+        _health = health;
+        _moveInput = moveInput;
+        _spawner = spawner;
+
+        _health.OnHealthChanged += Health_OnHealthChanged;
+    }
+
     private void Health_OnHealthChanged(int currentHealth)
     {
         if (currentHealth <= 0)
+        {
+            _spawner.AddKill();
             Destroy(gameObject);
+        }
     }
 
     void Patrol()
     {
         if (Vector3.Distance(transform.position, _targetPoint) < _pointReachThreshold)
         {
-            Vector2 randomPoint = Random.insideUnitCircle * _patrolRadius;
+            Vector2 randomPoint = UnityEngine.Random.insideUnitCircle * _patrolRadius;
             _targetPoint = new Vector3(randomPoint.x, transform.position.y, randomPoint.y);
         }
 

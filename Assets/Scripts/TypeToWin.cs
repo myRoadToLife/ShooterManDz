@@ -1,4 +1,4 @@
-public enum TypeOfLoss
+public enum TypeToWin
 {
     KillEnemies,
     HoldTime

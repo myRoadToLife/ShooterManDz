@@ -1,11 +1,13 @@
 using System;
 using UnityEngine;
+using static UnityEngine.EventSystems.EventTrigger;
 
 public class Bootstrap : MonoBehaviour
 {
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private Spawner _spawnerPrefab;
+    [SerializeField] private VictoryChecker _victoryChecker;
 
 
     private void Awake()
@@ -26,7 +28,11 @@ public class Bootstrap : MonoBehaviour
             new Vector3(0, 0, 5)
         };
 
-        spawner.Initialize(spawnPoints, _enemyPrefab);
+        _victoryChecker.Initialize(spawner);
+
+        spawner.InitializeSpawner(spawnPoints, _enemyPrefab);
+        spawner.InitializeVictoryChecker(_victoryChecker);
+        
     }
 
     private void InitializePlayer()
