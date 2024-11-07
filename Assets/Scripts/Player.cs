@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Player : MonoBehaviour, IDamageable
 {
-    public event Action<string> OnPlayerDied;
+    public event Action OnPlayerDied;
 
     [SerializeField] private float _speedMove;
     [SerializeField] private float _speedRotate;
@@ -49,7 +49,7 @@ public class Player : MonoBehaviour, IDamageable
 
         if (_health.CurrentValue <= 0)
         {
-            OnPlayerDied?.Invoke("Игрок умер!");
+            OnPlayerDied?.Invoke();
 
             _health.OnHealthChanged -= OnHealthChanged;
         }

@@ -1,10 +1,11 @@
 using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 public class OutcomeСheck : MonoBehaviour
 {
-    public event Action<string> OnWinHoldTime;
+    public event Action OnWinHoldTime;
 
     [SerializeField] private TypeToWin _situationWin;
     [SerializeField] private TypeToLose _situationLose;
@@ -12,6 +13,9 @@ public class OutcomeСheck : MonoBehaviour
     [SerializeField] private float _timeLimit;
     [SerializeField] private int _killCount;
     [SerializeField] private int _enemyCountToCapture;
+
+    [SerializeField] private TMP_Text _textWin;
+    [SerializeField] private TMP_Text _textLose;
 
     private Spawner _spawnerEnemy;
     private Player _player;
@@ -24,6 +28,9 @@ public class OutcomeСheck : MonoBehaviour
 
     public void Initialize(Player player, Spawner spawner, EntityList<Enemy> entityList)
     {
+        _textLose.gameObject.SetActive(false);
+        _textWin.gameObject.SetActive(false);
+
         _player = player;
         _spawnerEnemy = spawner;
         _entityList = entityList;
@@ -50,10 +57,17 @@ public class OutcomeСheck : MonoBehaviour
         }
     }
 
-    private void OnPlayerHoldTime(string obj) => Debug.Log(obj);
+    private void OnPlayerHoldTime()
+    {
+        _textWin.gameObject.SetActive(true);
+        _textWin.text = "Время вышло! Игрок победил!";
+    }
 
-    private void OnPlayerDied(string obj) => Debug.Log(obj);
-
+    private void OnPlayerDied()
+    {
+        _textLose.gameObject.SetActive(true);
+        _textLose.text = "Игрок умер от потери крови!";
+    }
 
     private void HandleEnemyRemoved(Enemy enemy)
     {
@@ -87,6 +101,6 @@ public class OutcomeСheck : MonoBehaviour
             yield return null;  // Ожидание до следующего кадра
         }
 
-        OnWinHoldTime?.Invoke("Победа по времени!");
+        OnWinHoldTime?.Invoke();
     }
 }

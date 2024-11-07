@@ -10,13 +10,13 @@ public class Gun : MonoBehaviour
 
     public void Shot()
     {
-        Bullet bullet = Instantiate(_bulletPrefab, _holderPoint);
+        Bullet bullet = Instantiate(_bulletPrefab, _holderPoint.position, _holderPoint.rotation);
 
         Rigidbody rigidbody = bullet.GetComponent<Rigidbody>();
         if (rigidbody != null)
         {
-            rigidbody.velocity = Vector3.zero; 
-            rigidbody.angularVelocity = Vector3.zero; 
+            rigidbody.velocity = Vector3.zero;
+            rigidbody.angularVelocity = Vector3.zero;
             rigidbody.AddForce(transform.forward * _force, ForceMode.Impulse);
         }
 
