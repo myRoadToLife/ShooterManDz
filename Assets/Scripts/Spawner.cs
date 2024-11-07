@@ -1,67 +1,49 @@
-using System;
-using System.Collections;
 using UnityEngine;
+using System.Collections;
+using System;
+using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
-    public event Action OnEnemyKilled;
+    [SerializeField] private Enemy _enemyPrefab;
 
-    private VictoryChecker _victoryChecker;
     private Vector3[] _spawnPoints;
-    private Enemy _enemyPrefab;
+    private Coroutine _spawnCoroutine;
+    private EntityList<Enemy> _enemyList;
 
     private float _spawnInterval = 3f;
-    private int _enemyKillCount;
-
-    private Coroutine _spawnCorutine;
 
     private void Start()
-    {
-       _spawnCorutine = StartCoroutine(SpawnEnemies());
+    {   
+        _spawnCoroutine = StartCoroutine(SpawnEnemies());
     }
 
-    public void InitializeVictoryChecker(VictoryChecker victoryChecker)
-    {
-        _victoryChecker = victoryChecker;
-    }
-
-    public void InitializeSpawner(Vector3[] spawnPoints, Enemy enemyPrefab)
+    public void InitializeSpawner(Vector3[] spawnPoints, Enemy enemyPrefab, EntityList<Enemy> entityList)
     {
         _spawnPoints = spawnPoints;
         _enemyPrefab = enemyPrefab;
+        _enemyList = entityList;
     }
 
-    public void AddKill()
-    {
-        _enemyKillCount++;
-        OnEnemyKilled?.Invoke();
-    }
-
-    internal int GetKillCount()
-    {
-        return _enemyKillCount;
-    }
-
+    
     private IEnumerator SpawnEnemies()
     {
         while (true)
         {
-            Vector3 spawnPoint = _spawnPoints[UnityEngine.Random.Range(0, _spawnPoints.Length)];
-
-            InitializeEnemy(spawnPoint, this);
-
+            Vector3 spawnPosition = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
+            InitializeEnemy(spawnPosition);
             yield return new WaitForSeconds(_spawnInterval);
         }
     }
 
-    public void InitializeEnemy(Vector3 pointSpawn, Spawner spawner)
+    private void InitializeEnemy(Vector3 spawnPosition)
     {
-        Enemy enemy = Instantiate(_enemyPrefab, pointSpawn, Quaternion.identity);
-
+        Enemy enemy = Instantiate(_enemyPrefab, spawnPosition, Quaternion.identity);
         GameInput userInput = enemy.GetComponent<GameInput>();
         Mover enemyMover = new Mover();
         Health enemyHealth = new Health(50);
 
-        enemy.Initialize(enemyMover, enemyHealth, userInput, this);
+        _enemyList.Add(enemy);
+        enemy.Initialize(enemyMover, enemyHealth, userInput, this, _enemyList);
     }
 }

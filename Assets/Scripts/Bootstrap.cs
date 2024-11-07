@@ -1,25 +1,33 @@
-using System;
 using UnityEngine;
-using static UnityEngine.EventSystems.EventTrigger;
 
 public class Bootstrap : MonoBehaviour
 {
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private Spawner _spawnerPrefab;
-    [SerializeField] private VictoryChecker _victoryChecker;
+    [SerializeField] private Outcome—heck _outcome—heck;
 
+    [SerializeField] private Transform _pointSpawnPlayer;
+
+    private EntityList<Enemy> _entityList;
 
     private void Awake()
     {
+        InitializeEntityList();
+
         InitializePlayer();
         InitializeSpawner();
+        InitializeOutcomeCheck();
+
     }
 
+    private void InitializeEntityList() => _entityList = new EntityList<Enemy>();
+
+    private void InitializeOutcomeCheck() => _outcome—heck.Initialize(_playerPrefab, _spawnerPrefab, _entityList);
+ 
     private void InitializeSpawner()
     {
         Spawner spawner = Instantiate(_spawnerPrefab);
-
         Vector3[] spawnPoints = new Vector3[]
         {
             new Vector3(0, 0, -5),
@@ -28,16 +36,12 @@ public class Bootstrap : MonoBehaviour
             new Vector3(0, 0, 5)
         };
 
-        _victoryChecker.Initialize(spawner);
-
-        spawner.InitializeSpawner(spawnPoints, _enemyPrefab);
-        spawner.InitializeVictoryChecker(_victoryChecker);
-        
+        spawner.InitializeSpawner(spawnPoints, _enemyPrefab, _entityList);
     }
 
     private void InitializePlayer()
     {
-        Player player = Instantiate(_playerPrefab);
+        Player player = Instantiate(_playerPrefab, _pointSpawnPlayer.position, Quaternion.identity);
         GameInput userInput = player.GetComponent<GameInput>();
         Gun gun = player.GetComponentInChildren<Gun>();
         Mover playerMover = new Mover();
