@@ -18,7 +18,6 @@ public class Bootstrap : MonoBehaviour
         InitializePlayer();
         InitializeSpawner();
         InitializeOutcomeCheck();
-
     }
 
     private void InitializeEntityList() => _entityList = new EntityList<Enemy>();

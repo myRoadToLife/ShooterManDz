@@ -1,20 +1,19 @@
 using UnityEngine;
 using System.Collections;
-using System;
 using Random = UnityEngine.Random;
 
 public class Spawner : MonoBehaviour
 {
-    [SerializeField] private Enemy _enemyPrefab;
+    private Enemy _enemyPrefab;
+    private EntityList<Enemy> _enemyList;
 
     private Vector3[] _spawnPoints;
     private Coroutine _spawnCoroutine;
-    private EntityList<Enemy> _enemyList;
 
     private float _spawnInterval = 3f;
 
     private void Start()
-    {   
+    {
         _spawnCoroutine = StartCoroutine(SpawnEnemies());
     }
 
@@ -24,8 +23,7 @@ public class Spawner : MonoBehaviour
         _enemyPrefab = enemyPrefab;
         _enemyList = entityList;
     }
-
-    
+ 
     private IEnumerator SpawnEnemies()
     {
         while (true)
@@ -43,7 +41,8 @@ public class Spawner : MonoBehaviour
         Mover enemyMover = new Mover();
         Health enemyHealth = new Health(50);
 
-        _enemyList.Add(enemy);
         enemy.Initialize(enemyMover, enemyHealth, userInput, this, _enemyList);
+
+        _enemyList.Add(enemy);
     }
 }

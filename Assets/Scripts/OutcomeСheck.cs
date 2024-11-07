@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class OutcomeСheck : MonoBehaviour
 {
-    public event Action<string> OnVictoryHoldTime;
+    public event Action<string> OnWinHoldTime;
 
     [SerializeField] private TypeToWin _situationWin;
     [SerializeField] private TypeToLose _situationLose;
@@ -21,8 +21,6 @@ public class OutcomeСheck : MonoBehaviour
     private float _elapsedTime;
 
     private int _removedEnemiesCount;
-    private int _addedEnemiesCount;
-
 
     public void Initialize(Player player, Spawner spawner, EntityList<Enemy> entityList)
     {
@@ -34,8 +32,7 @@ public class OutcomeСheck : MonoBehaviour
         {
             case TypeToWin.HoldTime:
                 _holdTimeoroutine = StartCoroutine(TimeForWin());
-                OnVictoryHoldTime += OnPlayerHoldTime;
-
+                OnWinHoldTime += OnPlayerHoldTime;
                 break;
             case TypeToWin.KillEnemies:
                 _entityList.OnEntityRemoved += HandleEnemyRemoved;
@@ -54,6 +51,7 @@ public class OutcomeСheck : MonoBehaviour
     }
 
     private void OnPlayerHoldTime(string obj) => Debug.Log(obj);
+
     private void OnPlayerDied(string obj) => Debug.Log(obj);
 
 
@@ -76,7 +74,7 @@ public class OutcomeСheck : MonoBehaviour
             Debug.Log("Враги захватили арену, ты проиграл!");
 
             _entityList.OnEntityAdded -= HandleEnemyAdded;
-        }    
+        }
     }
 
     private IEnumerator TimeForWin()
@@ -89,7 +87,6 @@ public class OutcomeСheck : MonoBehaviour
             yield return null;  // Ожидание до следующего кадра
         }
 
-        OnVictoryHoldTime?.Invoke("Победа по времени!");
+        OnWinHoldTime?.Invoke("Победа по времени!");
     }
-
 }

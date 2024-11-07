@@ -16,6 +16,7 @@ public class Player : MonoBehaviour, IDamageable
     private void Update()
     {
         Vector2 inputVector = _userInput.GetMovementVectorNormalized();
+
         _mover.Movement(transform, inputVector, _speedMove, _speedRotate);
     }
 
@@ -26,8 +27,8 @@ public class Player : MonoBehaviour, IDamageable
         _userInput = userInput;
         _gun = gun;
 
-        _userInput.OnShoted += UserInput_OnShoted;
-        _health.OnHealthChanged += Health_OnHealthChanged;
+        _userInput.OnShoted += OnShoted;
+        _health.OnHealthChanged += OnHealthChanged;
 
         Debug.Log(_health.CurrentValue.ToString());
     }
@@ -50,15 +51,15 @@ public class Player : MonoBehaviour, IDamageable
         {
             OnPlayerDied?.Invoke("Игрок умер!");
 
-            _health.OnHealthChanged -= Health_OnHealthChanged;
+            _health.OnHealthChanged -= OnHealthChanged;
         }
     }
-    private void UserInput_OnShoted()
+    private void OnShoted()
     {
         _gun.Shot();
     }
 
-    private void Health_OnHealthChanged(int currentHealth)
+    private void OnHealthChanged(int currentHealth)
     {
         Debug.Log("Здоровье игрока " + currentHealth.ToString());
 

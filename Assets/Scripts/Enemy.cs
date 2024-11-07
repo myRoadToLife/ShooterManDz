@@ -28,10 +28,10 @@ public class Enemy : MonoBehaviour, IDamageable
         _spawner = spawner;
         _enemyList = entityList;
 
-        _health.OnHealthChanged += Health_OnHealthChanged;
+        _health.OnHealthChanged += OnHealthChanged;
     }
 
-    private void Health_OnHealthChanged(int currentHealth)
+    private void OnHealthChanged(int currentHealth)
     {
         if (currentHealth <= 0)
         {

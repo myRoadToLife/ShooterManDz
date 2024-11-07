@@ -18,6 +18,8 @@ public class Mover
 
     public void RandomPatrol(Transform transform, float patrolRadius, float speedMove, float speedRotate)
     {
+        _timeSinceLastChange += Time.deltaTime;
+
         if (_timeSinceLastChange >= _changeDirectionInterval || Vector3.Distance(transform.position, _targetPoint) < _pointReachThreshold)
         {
             Vector2 randomPoint = Random.insideUnitCircle * patrolRadius;
@@ -25,8 +27,6 @@ public class Mover
 
             _timeSinceLastChange = 0f; 
         }
-
-        _timeSinceLastChange += Time.deltaTime;
 
         Vector3 directionToTarget = (_targetPoint - transform.position).normalized;
         Vector2 inputVector = new Vector2(directionToTarget.x, directionToTarget.z);
