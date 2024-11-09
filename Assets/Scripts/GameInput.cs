@@ -19,7 +19,6 @@ public class GameInput : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.E))
             OnShoted?.Invoke();
-
     }
 
     public Vector2 GetMovementVectorNormalized()

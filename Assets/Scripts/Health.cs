@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class Health
+public class Health 
 {
     public event Action<int> OnHealthChanged;
 
@@ -12,14 +12,13 @@ public class Health
     {
         _maxValue = maxValue;
         CurrentValue = _maxValue;
+        OnHealthChanged?.Invoke(maxValue);
     }
 
     public void ReduceHealth(int damage)
     {
         CurrentValue -= damage;
-
         CurrentValue = Mathf.Clamp(CurrentValue, 0, _maxValue);
-
         OnHealthChanged?.Invoke(CurrentValue);
     }
 }

@@ -1,9 +1,8 @@
 using System;
 using System.Collections;
-using TMPro;
 using UnityEngine;
 
-public class OutcomeСheck : MonoBehaviour
+public class OutcomeCheck : MonoBehaviour
 {
     public event Action OnWinHoldTime;
 
@@ -11,96 +10,154 @@ public class OutcomeСheck : MonoBehaviour
     [SerializeField] private TypeToLose _situationLose;
 
     [SerializeField] private float _timeLimit;
-    [SerializeField] private int _killCount;
+    [SerializeField] private int _needToKillCount;
     [SerializeField] private int _enemyCountToCapture;
+    [SerializeField] private UI _ui;
 
-    [SerializeField] private TMP_Text _textWin;
-    [SerializeField] private TMP_Text _textLose;
-
-    private Spawner _spawnerEnemy;
     private Player _player;
     private EntityList<Enemy> _entityList;
 
-    private Coroutine _holdTimeoroutine;
+    private Coroutine _holdTimeCoroutine;
     private float _elapsedTime;
+    private int _currentKilledEnemiesCount;
 
-    private int _removedEnemiesCount;
-
-    public void Initialize(Player player, Spawner spawner, EntityList<Enemy> entityList)
+    public void Initialize(Player player, EntityList<Enemy> entityList)
     {
-        _textLose.gameObject.SetActive(false);
-        _textWin.gameObject.SetActive(false);
-
         _player = player;
-        _spawnerEnemy = spawner;
         _entityList = entityList;
 
         switch (_situationWin)
         {
             case TypeToWin.HoldTime:
-                _holdTimeoroutine = StartCoroutine(TimeForWin());
-                OnWinHoldTime += OnPlayerHoldTime;
+                _holdTimeCoroutine = StartCoroutine(StartWinTimer());
+                OnWinHoldTime += DisplayWinMessageOnTime;
                 break;
             case TypeToWin.KillEnemies:
-                _entityList.OnEntityRemoved += HandleEnemyRemoved;
+                // Чтобы текст отображался сразу при инициализации, а не при первом убийстве
+                _ui.TextCounter(_ui.WinCounterText, _ui.WinObjectiveText, _currentKilledEnemiesCount, _needToKillCount, _ui.ObjectiveKillEnemies, _ui.TextEnemy);
+
+                _entityList.OnEntityRemoved += IncrementEnemyKillCount;
                 break;
         }
 
         switch (_situationLose)
         {
             case TypeToLose.PlayerDied:
-                _player.OnPlayerDied += OnPlayerDied;
+                // Чтобы текст отображался сразу при инициализации, а не при первом ранении
+                UpdatePlayerHealthDisplay(_player.PlayerCurrentHealth);
+
+                _player.OnChangedHealth += UpdatePlayerHealthDisplay;
+                _player.OnPlayerDied += DisplayPlayerDeathMessage;
                 break;
             case TypeToLose.ArenaCapture:
-                _entityList.OnEntityAdded += HandleEnemyAdded;
+                _entityList.OnEntityAdded += UpdateArenaCaptureStatus;
+                _entityList.OnEntityRemoved += UpdateRemainingEnemiesCount;
                 break;
         }
     }
 
-    private void OnPlayerHoldTime()
+    public void UpdatePlayerHealthDisplay(int state)
     {
-        _textWin.gameObject.SetActive(true);
-        _textWin.text = "Время вышло! Игрок победил!";
+        _ui.TextCounter(_ui.LoseCounterText, _ui.LoseObjectiveTex, _player.PlayerCurrentHealth, state, _ui.ObjectivePlayerHealth, null);
     }
 
-    private void OnPlayerDied()
+    private void DisplayWinMessageOnTime()
     {
-        _textLose.gameObject.SetActive(true);
-        _textLose.text = "Игрок умер от потери крови!";
+        _ui.TextMessageEvent(Color.blue, _ui.WinMessageTimeOver);
+        _ui.DisableTextObjects();
+
+        UnsubscribeFromEvents();
+        StopCoroutine();
     }
 
-    private void HandleEnemyRemoved(Enemy enemy)
+    private void DisplayPlayerDeathMessage()
     {
-        _removedEnemiesCount++;
+        _ui.TextMessageEvent(Color.red, _ui.LoseMessagePlayerDied);
+        _ui.DisableTextObjects();
 
-        if (_removedEnemiesCount >= _killCount)
-        {
-            Debug.Log($"Ты убил {_removedEnemiesCount} врагов и победил");
-
-            _entityList.OnEntityRemoved -= HandleEnemyRemoved;
-        }
+        UnsubscribeFromEvents();
+        StopCoroutine();
+        Destroy(_player.gameObject);
     }
 
-    private void HandleEnemyAdded(Enemy enemy)
+    private void UpdateArenaCaptureStatus()
     {
+        UpdateRemainingEnemiesDisplay();
+
         if (_entityList.Count >= _enemyCountToCapture)
         {
-            Debug.Log("Враги захватили арену, ты проиграл!");
+            _ui.TextMessageEvent(Color.red, _ui.LoseMessageArenaCaptured);
+            _ui.DisableTextObjects();
 
-            _entityList.OnEntityAdded -= HandleEnemyAdded;
+            UnsubscribeFromEvents();
         }
     }
 
-    private IEnumerator TimeForWin()
+    private void UpdateRemainingEnemiesDisplay()
+    {
+        _ui.TextCounter(_ui.LoseCounterText, _ui.LoseObjectiveTex, _entityList.Count, _enemyCountToCapture, _ui.ObjectiveCaptureArena, _ui.TextEnemy);
+    }
+
+    private void IncrementEnemyKillCount()
+    {
+        _currentKilledEnemiesCount++;
+
+        if (_currentKilledEnemiesCount >= _needToKillCount)
+        {
+            _ui.TextMessageEvent(Color.yellow, _ui.WinMessageEnemiesDefeated);
+
+            UnsubscribeFromEvents();
+            _ui.DisableTextObjects();
+        }
+    }
+
+    private void UpdateRemainingEnemiesCount()
+    {
+        if (_currentKilledEnemiesCount < _needToKillCount)
+        {
+            _ui.TextCounter(_ui.WinCounterText, _ui.WinObjectiveText, _currentKilledEnemiesCount, _needToKillCount, _ui.ObjectiveKillEnemies, _ui.TextEnemy);
+
+            UpdateRemainingEnemiesDisplay();
+        }
+    }
+
+    private IEnumerator StartWinTimer()
     {
         _elapsedTime = 0;
 
         while (_elapsedTime < _timeLimit)
         {
             _elapsedTime += Time.deltaTime;
-            yield return null;  // Ожидание до следующего кадра
+            _ui.TextCounter(_ui.WinCounterText, _ui.WinObjectiveText, _elapsedTime, _timeLimit, _ui.ObjectiveHoldArena, _ui.TextTime);
+            yield return null;
         }
 
         OnWinHoldTime?.Invoke();
+    }
+
+    private void StopCoroutine()
+    {
+        if (_holdTimeCoroutine != null)
+        {
+            StopCoroutine(_holdTimeCoroutine);
+        }
+    }
+
+    private void UnsubscribeFromEvents()
+    {
+        OnWinHoldTime -= DisplayWinMessageOnTime;
+
+        if (_entityList != null)
+        {
+            _entityList.OnEntityRemoved -= UpdateRemainingEnemiesCount;
+            _entityList.OnEntityAdded -= UpdateArenaCaptureStatus;
+            _entityList.OnEntityRemoved -= IncrementEnemyKillCount;
+        }
+
+        if (_player != null)
+        {
+            _player.OnPlayerDied -= DisplayPlayerDeathMessage;
+            _player.OnChangedHealth -= UpdatePlayerHealthDisplay;
+        }
     }
 }

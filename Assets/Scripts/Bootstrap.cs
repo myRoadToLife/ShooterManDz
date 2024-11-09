@@ -5,11 +5,12 @@ public class Bootstrap : MonoBehaviour
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private Spawner _spawnerPrefab;
-    [SerializeField] private Outcome—heck _outcome—heck;
+    [SerializeField] private OutcomeCheck _outcome—heck;
 
     [SerializeField] private Transform _pointSpawnPlayer;
 
     private EntityList<Enemy> _entityList;
+    private Player _player;
 
     private void Awake()
     {
@@ -22,11 +23,12 @@ public class Bootstrap : MonoBehaviour
 
     private void InitializeEntityList() => _entityList = new EntityList<Enemy>();
 
-    private void InitializeOutcomeCheck() => _outcome—heck.Initialize(_playerPrefab, _spawnerPrefab, _entityList);
+    private void InitializeOutcomeCheck() => _outcome—heck.Initialize(_player, _entityList);
  
     private void InitializeSpawner()
     {
         Spawner spawner = Instantiate(_spawnerPrefab);
+
         Vector3[] spawnPoints = new Vector3[]
         {
             new Vector3(0, 0, -5),
@@ -40,12 +42,13 @@ public class Bootstrap : MonoBehaviour
 
     private void InitializePlayer()
     {
-        Player player = Instantiate(_playerPrefab, _pointSpawnPlayer.position, Quaternion.identity);
-        GameInput userInput = player.GetComponent<GameInput>();
-        Gun gun = player.GetComponentInChildren<Gun>();
+        _player = Instantiate(_playerPrefab, _pointSpawnPlayer.position, Quaternion.identity);
+
+        GameInput userInput = _player.GetComponent<GameInput>();
+        Gun gun = _player.GetComponentInChildren<Gun>();
         Mover playerMover = new Mover();
         Health playerHealth = new Health(100);
 
-        player.Initialize(playerMover, playerHealth, userInput, gun);
+        _player.Initialize(playerMover, playerHealth, userInput, gun);
     }
 }

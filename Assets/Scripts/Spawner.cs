@@ -8,9 +8,9 @@ public class Spawner : MonoBehaviour
     private EntityList<Enemy> _enemyList;
 
     private Vector3[] _spawnPoints;
-    private Coroutine _spawnCoroutine;
-
     private float _spawnInterval = 3f;
+
+    private Coroutine _spawnCoroutine;
 
     private void Start()
     {
@@ -23,7 +23,7 @@ public class Spawner : MonoBehaviour
         _enemyPrefab = enemyPrefab;
         _enemyList = entityList;
     }
- 
+
     private IEnumerator SpawnEnemies()
     {
         while (true)

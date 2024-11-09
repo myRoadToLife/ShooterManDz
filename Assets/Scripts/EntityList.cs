@@ -3,8 +3,8 @@ using System;
 
 public class EntityList <T> 
 {
-    public event Action<T> OnEntityAdded;
-    public event Action<T> OnEntityRemoved;
+    public event Action OnEntityAdded;
+    public event Action OnEntityRemoved;
 
     private List<T> _entities = new List<T>();
 
@@ -15,7 +15,7 @@ public class EntityList <T>
         if (!_entities.Contains(entity))
         {
             _entities.Add(entity);
-            OnEntityAdded?.Invoke(entity);
+            OnEntityAdded?.Invoke();
         }
     }
 
@@ -24,7 +24,7 @@ public class EntityList <T>
         if (_entities.Contains(entity))
         {
             _entities.Remove(entity);
-            OnEntityRemoved?.Invoke(entity);
+            OnEntityRemoved?.Invoke();
         }
     }
 }

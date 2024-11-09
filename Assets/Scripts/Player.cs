@@ -4,6 +4,7 @@ using UnityEngine;
 public class Player : MonoBehaviour, IDamageable
 {
     public event Action OnPlayerDied;
+    public event Action<int> OnChangedHealth;
 
     [SerializeField] private float _speedMove;
     [SerializeField] private float _speedRotate;
@@ -12,6 +13,8 @@ public class Player : MonoBehaviour, IDamageable
     private Health _health;
     private GameInput _userInput;
     private Gun _gun;
+
+    public int PlayerCurrentHealth {  get; private set; }
 
     private void Update()
     {
@@ -27,10 +30,9 @@ public class Player : MonoBehaviour, IDamageable
         _userInput = userInput;
         _gun = gun;
 
-        _userInput.OnShoted += OnShoted;
-        _health.OnHealthChanged += OnHealthChanged;
+        PlayerCurrentHealth = _health.CurrentValue;
 
-        Debug.Log(_health.CurrentValue.ToString());
+        _userInput.OnShoted += OnShoted;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -47,23 +49,16 @@ public class Player : MonoBehaviour, IDamageable
     {
         _health.ReduceHealth(damage);
 
+        OnChangedHealth?.Invoke(_health.CurrentValue);
+
         if (_health.CurrentValue <= 0)
         {
             OnPlayerDied?.Invoke();
-
-            _health.OnHealthChanged -= OnHealthChanged;
         }
     }
+
     private void OnShoted()
     {
         _gun.Shot();
-    }
-
-    private void OnHealthChanged(int currentHealth)
-    {
-        Debug.Log("Здоровье игрока " + currentHealth.ToString());
-
-        if (currentHealth <= 0)
-            Destroy(gameObject);
     }
 }

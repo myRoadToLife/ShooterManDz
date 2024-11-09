@@ -35,7 +35,6 @@ public class Enemy : MonoBehaviour, IDamageable
     {
         if (currentHealth <= 0)
         {
-
             _enemyList.Remove(this);
 
             Destroy(gameObject);

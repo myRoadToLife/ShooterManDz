@@ -13,6 +13,7 @@ public class Gun : MonoBehaviour
         Bullet bullet = Instantiate(_bulletPrefab, _holderPoint.position, _holderPoint.rotation);
 
         Rigidbody rigidbody = bullet.GetComponent<Rigidbody>();
+
         if (rigidbody != null)
         {
             rigidbody.velocity = Vector3.zero;
