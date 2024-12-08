@@ -1,5 +1,5 @@
 public enum TypeToWin
 {
     KillEnemies,
-    HoldTime
+    HoldTime,
 }

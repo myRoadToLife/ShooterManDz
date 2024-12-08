@@ -1,5 +1,5 @@
 public enum TypeToLose
 {
     PlayerDied,
-    ArenaCapture
+    ArenaCapture,
 }

@@ -3,18 +3,19 @@ using UnityEngine;
 
 public class UI : MonoBehaviour
 {
-    public readonly string WinMessageTimeOver = "Время вышло! Игрок победил!";
-    public readonly string WinMessageEnemiesDefeated = "Игрок убил много врагов и победил!";
-    public readonly string LoseMessagePlayerDied = "Игрок умер от потери крови!";
-    public readonly string LoseMessageArenaCaptured = "Враги захватили арену, Игрок проиграл!";
+    public readonly string WinMessageTimeOver = "Р’СЂРµРјСЏ РІС‹С€Р»Рѕ! РРіСЂРѕРє РїРѕР±РµРґРёР»!";
+    public readonly string WinMessageEnemiesDefeated = "РРіСЂРѕРє СѓР±РёР» РјРЅРѕРіРѕ РІСЂР°РіРѕРІ Рё РїРѕР±РµРґРёР»!";
+    public readonly string LoseMessagePlayerDied = "РРіСЂРѕРє СѓРјРµСЂ РѕС‚ РїРѕС‚РµСЂРё РєСЂРѕРІРё!";
+    public readonly string LoseMessageArenaCaptured = "Р’СЂР°РіРё Р·Р°С…РІР°С‚РёР»Рё Р°СЂРµРЅСѓ, РРіСЂРѕРє РїСЂРѕРёРіСЂР°Р»!";
 
-    public readonly string ObjectiveKillEnemies = "Игроку нужно убить: ";
-    public readonly string ObjectivePlayerHealth = "У игрока осталось здоровья: ";
-    public readonly string ObjectiveCaptureArena = "Для захвата арены нужно: ";
-    public readonly string ObjectiveHoldArena = "Продержись на арене: ";
+    public readonly string ObjectiveKillEnemies = "РРіСЂРѕРєСѓ РЅСѓР¶РЅРѕ СѓР±РёС‚СЊ: ";
+    public readonly string ObjectivePlayerHealth = "РЈ РёРіСЂРѕРєР° РѕСЃС‚Р°Р»РѕСЃСЊ Р·РґРѕСЂРѕРІСЊСЏ: ";
+    public readonly string ObjectiveCaptureArena = "Р”Р»СЏ Р·Р°С…РІР°С‚Р° Р°СЂРµРЅС‹ РЅСѓР¶РЅРѕ: ";
+    public readonly string ObjectiveHoldArena = "РџСЂРѕРґРµСЂР¶РёСЃСЊ РЅР° Р°СЂРµРЅРµ: ";
 
-    public readonly string TextEnemy = " врагов!";
-    public readonly string TextTime = " секунд!";
+    public readonly string TextEnemy = " РІСЂР°РіРѕРІ!";
+    public readonly string TextTime = " СЃРµРєСѓРЅРґ!";
+
 
 
     [field: SerializeField] public TMP_Text EventText { get; private set; }

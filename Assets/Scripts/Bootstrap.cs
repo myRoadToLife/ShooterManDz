@@ -1,11 +1,12 @@
 using UnityEngine;
+using UnityEngine.Serialization;
 
 public class Bootstrap : MonoBehaviour
 {
     [SerializeField] private Player _playerPrefab;
     [SerializeField] private Enemy _enemyPrefab;
     [SerializeField] private Spawner _spawnerPrefab;
-    [SerializeField] private OutcomeCheck _outcomeÑheck;
+    [SerializeField] private OutcomeCheck _outcomeCheck;
 
     [SerializeField] private Transform _pointSpawnPlayer;
 
@@ -21,10 +22,12 @@ public class Bootstrap : MonoBehaviour
         InitializeOutcomeCheck();
     }
 
-    private void InitializeEntityList() => _entityList = new EntityList<Enemy>();
+    private void InitializeEntityList() =>
+        _entityList = new EntityList<Enemy>();
 
-    private void InitializeOutcomeCheck() => _outcomeÑheck.Initialize(_player, _entityList);
- 
+    private void InitializeOutcomeCheck() =>
+        _outcomeCheck.Initialize(_player, _entityList);
+
     private void InitializeSpawner()
     {
         Spawner spawner = Instantiate(_spawnerPrefab);

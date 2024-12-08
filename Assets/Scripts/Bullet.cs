@@ -2,7 +2,13 @@ using UnityEngine;
 
 public class Bullet : MonoBehaviour
 {
+    #region Variables
+
     [SerializeField] private int _damage;
+
+    #endregion
+
+    #region Unity lifecycle
 
     private void OnTriggerEnter(Collider other)
     {
@@ -14,4 +20,6 @@ public class Bullet : MonoBehaviour
             Destroy(gameObject);
         }
     }
+
+    #endregion
 }
